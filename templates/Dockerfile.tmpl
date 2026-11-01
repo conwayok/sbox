@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
+ARG USERNAME
+ARG HOME_DIR
+RUN mkdir -p "$(dirname "$HOME_DIR")" && \
+    useradd -m -d "$HOME_DIR" -s /bin/bash "$USERNAME"

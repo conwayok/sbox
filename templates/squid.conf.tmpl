@@ -1,0 +1,18 @@
+http_port 3128
+{{if .AllowAll}}
+http_access allow all
+{{else}}
+acl allowlist_domains dstdomain "/acls/dstdomain.allowlist.txt"
+acl allowlist_ips dst "/acls/dst.allowlist.txt"
+http_access allow allowlist_domains
+http_access allow allowlist_ips
+http_access deny all
+{{end}}
+strip_query_terms on
+cache deny all
+logfile_rotate 7
+
+# ISO8601 local time, Squid/HTTP status, method, URL (query stripped), origin IP, User-Agent
+logformat egress %{%Y-%m-%dT%H:%M:%S%z}tl %Ss/%>Hs %rm %ru %<a "%{User-Agent}>h"
+
+access_log stdio:/var/log/squid/egress.log egress

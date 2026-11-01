@@ -1,0 +1,52 @@
+name: sbox-{{ .SboxTag }}
+services:
+  sandbox:
+    image: sbox-{{ .SboxTag }}
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        USERNAME: ${USER}
+        HOME_DIR: ${HOME}
+    command: sleep infinity
+    environment:
+      HTTP_PROXY: "http://squid:3128"
+      HTTPS_PROXY: "http://squid:3128"
+      ALL_PROXY: "http://squid:3128"
+      http_proxy: "http://squid:3128"
+      https_proxy: "http://squid:3128"
+      all_proxy: "http://squid:3128"
+      NO_PROXY: "localhost,127.0.0.1,::1,squid"
+      no_proxy: "localhost,127.0.0.1,::1,squid"
+    {{- if .Volumes }}
+    volumes:
+      {{- range .Volumes }}
+      - {{ . }}
+      {{- end }}
+    {{- end }}
+    networks:
+      - sandbox
+      - sandbox_egress
+    privileged: {{ .Privileged }}
+  squid:
+    image: ubuntu/squid:latest
+    restart: unless-stopped
+    networks:
+      - sandbox_egress
+      - internet
+    {{- if .ExtraHosts }}
+    extra_hosts:
+      {{- range .ExtraHosts }}
+      - {{ . }}
+      {{- end }}
+    {{- end }}
+    volumes:
+      - ./squid/squid.conf:/etc/squid/squid.conf:ro
+      - ./squid/acls:/acls:ro
+      - {{ .SquidLogDirectory }}:/var/log/squid
+networks:
+  sandbox:
+    internal: true
+  sandbox_egress:
+    internal: true
+  internet: {}
