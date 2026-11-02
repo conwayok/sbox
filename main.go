@@ -75,7 +75,7 @@ type RenderedConfig struct {
 // home directory everything else is derived from.
 type SboxPaths struct {
 	User     string // $USER, trimmed; else os/user.Current().Username
-	SboxTag  string // strings.ToLower(User)
+	SboxTag  string // $SBOX_TAG, else "default"
 	Home     string // $HOME, absolute, no trailing separator
 	SboxHome string // $SBOX_HOME, else $HOME/.sbox; absolute
 }
@@ -156,6 +156,12 @@ func resolvePaths() (SboxPaths, error) {
 		sboxHome = filepath.Join(home, ".sbox")
 	}
 
+	tag := strings.TrimSpace(os.Getenv("SBOX_TAG"))
+
+	if tag == "" {
+		tag = "default"
+	}
+
 	absHome, err := filepath.Abs(home)
 
 	if err != nil {
@@ -170,7 +176,7 @@ func resolvePaths() (SboxPaths, error) {
 
 	return SboxPaths{
 		User:     name,
-		SboxTag:  strings.ToLower(name),
+		SboxTag:  tag,
 		Home:     absHome,
 		SboxHome: absSboxHome,
 	}, nil
