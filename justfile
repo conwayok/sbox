@@ -1,3 +1,2 @@
 install:
-	go build -o out/sbox . && \
-		cp out/sbox ~/.local/bin/sbox
+	go build -o out/sbox . && mkdir -p ~/.local/bin && cp out/sbox ~/.local/bin/sbox
