@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/devcontainers/base:ubuntu
 ARG USERNAME
 ARG HOME_DIR
-RUN mkdir -p "$(dirname "$HOME_DIR")" && \
-    useradd -m -d "$HOME_DIR" -s /bin/bash "$USERNAME"
+RUN useradd --badname --create-home --home-dir "${HOME_DIR}" --shell /bin/bash "${USERNAME}" \
+ && printf '%s ALL=(ALL) NOPASSWD:ALL\n' "${USERNAME}" > /etc/sudoers.d/90-agent-sudo \
+ && chmod 0440 /etc/sudoers.d/90-agent-sudo
