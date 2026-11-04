@@ -16,8 +16,8 @@ services:
       http_proxy: "http://squid:3128"
       https_proxy: "http://squid:3128"
       all_proxy: "http://squid:3128"
-      NO_PROXY: "localhost,127.0.0.1,::1,squid"
-      no_proxy: "localhost,127.0.0.1,::1,squid"
+      NO_PROXY: "localhost,.localhost,127.0.0.1,::1,squid"
+      no_proxy: "localhost,.localhost,127.0.0.1,::1,squid"
     {{- if .Volumes }}
     volumes:
       {{- range .Volumes }}
